@@ -7,6 +7,6 @@
     "default_icon": "icon_white.png",
     "default_popup": "options.html"
   },
- "permissions": ["http://*.googleapis.com/"],
- "content_security_policy": "script-src 'self' chrome-extension-resource: 'unsafe-eval'; default-src 'self'",
+ "permissions": ["http://*.googleapis.com/", "https://*.googleapis.com/"],
+ "content_security_policy": "default-src 'self' https://maps.googleapis.com",
  "manifest_version": 3}

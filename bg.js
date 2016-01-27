@@ -19,7 +19,18 @@ function shouldCheckRule(rule) {
 }
 
 function checkRule(rule) {
-  return true; // for testing
+  var xmlHttp = new XMLHttpRequest();
+  var url = 
+    "https://maps.googleapis.com/maps/api/directions/json?origin=" +
+    rule.src + "&destination=" + rule.des;
+  xmlHttp.open( "GET", url, false );
+  xmlHttp.send( null );
+  var response = JSON.parse(xmlHttp.responseText);
+  if (response.routes[0].legs[0].duration.value < 
+    parseInt(rule.limit_time, 10) * 60) {
+    return true;
+  }
+  return false; 
 }
 
 // init for testing
@@ -27,7 +38,7 @@ localStorage.rules = JSON.stringify([{
   src: '245 E 40th Ave, San Mateo, CA 94403',
   des: '888 Brannan St, San Francisco, CA 94103',
   start_time: '8am',
-  end_time: '11am',
+  end_time: '2pm',
   limit_time: '35',
   mode: 'weekday',
   enabled: true
@@ -69,6 +80,5 @@ function checkTrip() {
   return;
 }
 
-checkTrip();
-// setInterval(checkTrip , 5000); // change 5000 to 300000 (5s -> 5min)
-chrome.browserAction.setIcon({path:"icon_white.png"});
+checkTrip(); // testing
+// setInterval(checkTrip , 300000); // testing
