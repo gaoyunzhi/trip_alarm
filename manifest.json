@@ -9,4 +9,4 @@
   },
  "permissions": ["http://*.googleapis.com/", "https://*.googleapis.com/"],
  "content_security_policy": "default-src 'self' https://maps.googleapis.com",
- "manifest_version": 3}
+ "manifest_version": 2}

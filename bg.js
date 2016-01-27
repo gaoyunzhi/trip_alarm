@@ -43,19 +43,18 @@ function checkRule(rule) {
 }
 
 // init for testing
-localStorage.rules = JSON.stringify([{
-  src: '245 E 40th Ave, San Mateo, CA 94403',
-  des: '888 Brannan St, San Francisco, CA 94103',
-  start_time: '8am',
-  end_time: '2pm',
-  limit_time: '35',
-  mode: 'weekday',
-  enabled: true
-}]);
+// localStorage.rules = JSON.stringify([{
+//   src: '245 E 40th Ave, San Mateo, CA 94403',
+//   des: '888 Brannan St, San Francisco, CA 94103',
+//   start_time: '8am',
+//   end_time: '11pm',
+//   limit_time: '35',
+//   mode: 'weekday',
+//   enabled: true
+// }]);
 
 
 function checkTrip() {
-  console.log('checktrip');
   var pass = 0;
   var fail = 0;
   var rules = localStorage.rules;
@@ -89,5 +88,5 @@ function checkTrip() {
   return;
 }
 
-checkTrip(); // testing
-// setInterval(checkTrip , 300000); // testing
+// checkTrip(); // testing
+setInterval(checkTrip , 300000); 
