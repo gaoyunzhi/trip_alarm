@@ -12,8 +12,17 @@ function shouldCheckRule(rule) {
   }
   var start_time = Date.parse(moment(rule.start_time, ['h:m a', 'H:m']))
   var end_time = Date.parse(moment(rule.end_time, ['h:m a', 'H:m']))
+  localStorage.checkedRule = localStorage.checkedRule  || {};
+  if (rule.mode == 'onetime' && Date.now() > end_time &&
+    localStorage.checkedRule[rule.hashCode()]) {
+    rule.enabled = false;
+    return false;
+  }
   if (Date.now() < start_time || Date.now() > end_time) {
     return false;
+  }
+  if (rule.mode == 'onetime') {
+    localStorage.checkedRule[rule.hashCode()] = true;
   }
   return true;
 }
