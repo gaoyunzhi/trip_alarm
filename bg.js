@@ -2,28 +2,39 @@
 // Use of this source code is governed by a BSD-style license that can be
 // found in the LICENSE file.
 
-function matches(rule, item) {
-  if (rule.matcher == 'js')
-    return eval(rule.match_param);
-  if (rule.matcher == 'hostname') {
-    var link = document.createElement('a');
-    link.href = item.url.toLowerCase();
-    var host = (rule.match_param.indexOf(':') < 0) ? link.hostname : link.host;
-    return (host.indexOf(rule.match_param.toLowerCase()) ==
-            (host.length - rule.match_param.length));
+function shouldCheckRule(rule) {
+  if (!rule.enabled) {
+    return false;
   }
-  if (rule.matcher == 'default')
-    return item.filename == rule.match_param;
-  if (rule.matcher == 'url-regex')
-    return (new RegExp(rule.match_param)).test(item.url);
-  if (rule.matcher == 'default-regex')
-    return (new RegExp(rule.match_param)).test(item.filename);
-  return false;
+  var day = (new Date()).getDay();
+  if (rule.mode == 'weekday' && day > 5) {
+    return false;
+  }
+  var start_time = Date.parse(moment(rule.start_time, ['h:m a', 'H:m']))
+  var end_time = Date.parse(moment(rule.end_time, ['h:m a', 'H:m']))
+  if (Date.now() < start_time || Date.now() > end_time) {
+    return false;
+  }
+  return true;
 }
 
-chrome.browserAction.setIcon({path:"icon_white.png"});
+function checkRule(rule) {
+  return true; // for testing
+}
 
-var checkTrip = function() {
+// init for testing
+localStorage.rules = JSON.stringify([{
+  src: '245 E 40th Ave, San Mateo, CA 94403',
+  des: '888 Brannan St, San Francisco, CA 94103',
+  start_time: '8am',
+  end_time: '11am',
+  limit_time: '35',
+  mode: 'weekday',
+  enabled: true
+}]);
+
+
+function checkTrip() {
   console.log('checktrip');
   var pass = 0;
   var fail = 0;
@@ -33,10 +44,13 @@ var checkTrip = function() {
   } catch (e) {
     localStorage.rules = JSON.stringify([]);
   }
+  if (!rules) {
+    return;
+  }
   for (var index = 0; index < rules.length; ++index) {
     var rule = rules[index];
     if (shouldCheckRule(rule)) {
-      if checkRule(rule) {
+      if (checkRule(rule)) {
         pass += 1;
       } else {
         fail += 1;
@@ -48,11 +62,13 @@ var checkTrip = function() {
     return;
   } 
   if (fail == 0) {
-    chrome.browserAction.setIcon({path:"icon_red.png"});
+    chrome.browserAction.setIcon({path:"icon_green.png"});
     return;
   }
-  chrome.browserAction.setIcon({path:"icon_green.png"});
+  chrome.browserAction.setIcon({path:"icon_red.png"});
   return;
 }
 
-setInterval(checkTrip , 5000); // change 5000 to 300000 (5s -> 5min)
+checkTrip();
+// setInterval(checkTrip , 5000); // change 5000 to 300000 (5s -> 5min)
+chrome.browserAction.setIcon({path:"icon_white.png"});

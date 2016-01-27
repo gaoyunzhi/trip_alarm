@@ -1,7 +1,7 @@
 {"name": "Trip alarm",
  "description": "alarm you when road is clear",
  "version": "0.1",
- "background": {"scripts": ["bg.js"], "persistent": false},
+ "background": {"scripts": ["moment.min.js", "bg.js"], "persistent": false},
  "options_page": "options.html",
  "browser_action": {
     "default_icon": "icon_white.png",
