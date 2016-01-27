@@ -1,0 +1,42 @@
+<!doctype html>
+<html>
+<head>
+<title>Trip alarm</title>
+<script src="options.js"></script>
+</head>
+<body>
+<table id="rules">
+  <tr>
+    <td> start location</td>
+    <td> end location </td>
+    <td> alerm checking start time (e.g. 8am)</td>
+    <td> alerm checking end time (e.g. 11am)</td>
+    <td> alerm me when travel time is less than (min) </td>
+    <td> mode </td>
+    <td> enabled </td>
+  </tr>
+</table>
+<button id="new">New Rule</button>
+<table hidden>
+<tr id="rule-template" hidden>
+  <td> <input type=text class=src> </td>
+  <td> <input type=text class=des> </td>
+  <td> <input type=text class=start_time> </td>
+  <td> <input type=text class=end_time> </td>
+  <td> <input type=text class=limit_time> </td>
+  <td>
+    <select class=mode>
+      <option value=weekday>weekday</option>
+      <option value=onetime>onetime</option>
+    </select>
+  </td>
+  <td> 
+    <span class=nowrap>
+      <input type=checkbox class=enabled checked>
+        <label class=enabled-label>Enabled</label>
+      <span>
+    <button class=remove>Remove</button></td>
+</tr>
+</table>
+</body>
+</html>
