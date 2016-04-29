@@ -2,19 +2,23 @@
 // Use of this source code is governed by a BSD-style license that can be
 // found in the LICENSE file.
 
+function hashCode(rule) {
+  return JSON.stringify(rule);
+}
+
 function shouldCheckRule(rule) {
   if (!rule.enabled) {
     return false;
   }
   var day = (new Date()).getDay();
-  if (rule.mode == 'weekday' && day > 5) {
+  if (rule.mode == 'weekday' && (day == 0 || day == 6)) {
     return false;
   }
   var start_time = Date.parse(moment(rule.start_time, ['h:m a', 'H:m']))
   var end_time = Date.parse(moment(rule.end_time, ['h:m a', 'H:m']))
   localStorage.checkedRule = localStorage.checkedRule  || {};
   if (rule.mode == 'onetime' && Date.now() > end_time &&
-    localStorage.checkedRule[rule.hashCode()]) {
+    localStorage.checkedRule[hashCode(rule)]) {
     rule.enabled = false;
     return false;
   }
@@ -22,7 +26,7 @@ function shouldCheckRule(rule) {
     return false;
   }
   if (rule.mode == 'onetime') {
-    localStorage.checkedRule[rule.hashCode()] = true;
+    localStorage.checkedRule[hashCode(rule)] = true;
   }
   return true;
 }
@@ -43,16 +47,35 @@ function checkRule(rule) {
 }
 
 // init for testing
-// localStorage.rules = JSON.stringify([{
-//   src: '245 E 40th Ave, San Mateo, CA 94403',
-//   des: '888 Brannan St, San Francisco, CA 94103',
-//   start_time: '8am',
-//   end_time: '11pm',
-//   limit_time: '35',
-//   mode: 'weekday',
-//   enabled: true
-// }]);
-
+// if (!localStorage.rules) {
+//   localStorage.rules = JSON.stringify([{
+//     src: '245 E 40th Ave, San Mateo, CA 94403',
+//     des: '888 Brannan St, San Francisco, CA 94103',
+//     start_time: '8am',
+//     end_time: '11am',
+//     limit_time: '35',
+//     mode: 'weekday',
+//     enabled: true
+//   },
+//   {
+//     src: '888 Brannan St, San Francisco, CA 94103',
+//     des: '245 E 40th Ave, San Mateo, CA 94403',
+//     start_time: '5pm',
+//     end_time: '8pm',
+//     limit_time: '25',
+//     mode: 'weekday',
+//     enabled: true
+//   },
+//   {
+//     src: '888 Brannan St, San Francisco, CA 94103',
+//     des: '4242 S El Camino Real, San Mateo, CA 94403',
+//     start_time: '1pm',
+//     end_time: '8pm',
+//     limit_time: '25',
+//     mode: 'onetime',
+//     enabled: true
+//   }]);
+// }
 
 function checkTrip() {
   var pass = 0;
