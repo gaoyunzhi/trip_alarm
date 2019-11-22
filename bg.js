@@ -1,6 +1,5 @@
-import {getCredentials} from './CREDENTIALS'; 
-
-var credentials = getCredentials();
+var fs = require('fs'),
+var credentials = JSON.parse(fs.readFileSync('./CREDNETIALS.json', 'UTF-8'));
 console.error(credentials);
 
 function hashCode(rule) {
