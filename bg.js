@@ -49,7 +49,7 @@ function checkRule(rule) {
 // init for testing
 // if (!localStorage.rules) {
 //   localStorage.rules = JSON.stringify([{
-//     src: '245 E 40th Ave, San Mateo, CA 94403',
+//     src: '4242 S El Camino Real, San Mateo, CA 94403',
 //     des: '888 Brannan St, San Francisco, CA 94103',
 //     start_time: '8am',
 //     end_time: '11am',
@@ -59,7 +59,7 @@ function checkRule(rule) {
 //   },
 //   {
 //     src: '888 Brannan St, San Francisco, CA 94103',
-//     des: '245 E 40th Ave, San Mateo, CA 94403',
+//     des: '4242 S El Camino Real, San Mateo, CA 94403',
 //     start_time: '5pm',
 //     end_time: '8pm',
 //     limit_time: '25',
