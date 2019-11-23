@@ -45,7 +45,17 @@ Rule.prototype.getElement = function(name) {
 
 Rule.next_id = 0;
 
+function getSmartLocElement() {
+  return document.querySelector('.smart_loc');
+}
+
 function loadRules() {
+  if (localStorage.smart_loc === undefined) {
+    localStorage.smart_loc = true;
+  }
+  getSmartLocElement().checked = 
+    localStorage.smart_loc === "true" || localStorage.smart_loc === true;
+  getSmartLocElement().onchange = storeRules;
   var rules = localStorage.rules;
   try {
     JSON.parse(rules).forEach(function(rule) {new Rule(rule);});
@@ -65,6 +75,7 @@ function storeRules() {
             mode: node.rule.getElement('mode').value,
             enabled: node.rule.getElement('enabled').checked};
   }));
+  localStorage.smart_loc = getSmartLocElement().checked;  
 }
 
 window.onload = function() {

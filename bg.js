@@ -1,11 +1,14 @@
+// load from credentials.js
 var credentials = {
-  "key":"" // feel in CREDENTIALS.js
+  "key":""
 };
 
+var INTERVAL = 300000;
 var user_pos = undefined;
 
 function saveLoc(position) {
   user_pos = position;
+  checkTrip();
 }
 
 navigator.geolocation.getCurrentPosition(saveLoc);
@@ -13,7 +16,6 @@ navigator.geolocation.getCurrentPosition(saveLoc);
 function hashCode(rule) {
   return JSON.stringify(rule);
 }
-
 
 function getDuration(src, des) {
   var xmlHttp = new XMLHttpRequest();
@@ -27,7 +29,11 @@ function getDuration(src, des) {
 }
 
 function getPosString(pos) {
-  return '(' + pos.coords.latitude.toString() + ',' + pos.coords.longitude.toString() + ')'
+  return pos.coords.latitude.toString() + ',' + pos.coords.longitude.toString()
+}
+
+function isEnabled(smart_loc) {
+  return smart_loc === "true" || smart_loc === true;
 }
 
 function shouldCheckRule(rule) {
@@ -54,7 +60,7 @@ function shouldCheckRule(rule) {
   }
   if (user_pos) {
     // user no longer in the rule.src, don't show signal
-    if (getDuration(getPosString(user_pos), rule.src) > 10*60) {
+    if (isEnabled(localStorage.smart_loc) && getDuration(getPosString(user_pos), rule.src) > 10*60) {
       return false;
     }
   }
@@ -70,20 +76,19 @@ function checkRule(rule) {
 }
 
 // init for testing
-// if (!localStorage.rules) {
-//   localStorage.rules = JSON.stringify([{
-//     src: '4242 S El Camino Real, San Mateo, CA 94403',
-//     des: '888 Brannan St, San Francisco, CA 94103',
-//     start_time: '2pm',
-//     end_time: '5pm',
-//     limit_time: '35',
-//     mode: 'weekday',
-//     enabled: true
-//   }]);
-// }
+if (!localStorage.rules) {
+  localStorage.rules = JSON.stringify([{
+    src: '240 E 40th Ave, San Mateo, CA 94403',
+    des: '1170 Bordeaux Dr, Sunnyvale, CA 94089',
+    start_time: '6pm',
+    end_time: '8pm',
+    limit_time: '35',
+    mode: 'weekday',
+    enabled: true
+  }]);
+}
 
 function checkTrip() {
-  navigator.geolocation.getCurrentPosition(saveLoc);
   var pass = 0;
   var fail = 0;
   var rules = localStorage.rules;
@@ -117,5 +122,10 @@ function checkTrip() {
   return;
 }
 
-checkTrip();
-setInterval(checkTrip , 300000); 
+function checkLoc() {
+  navigator.geolocation.getCurrentPosition(saveLoc);
+}
+
+checkLoc();
+setInterval(checkTrip, INTERVAL); 
+setInterval(checkLoc, INTERVAL); 
