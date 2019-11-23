@@ -2,8 +2,32 @@ var credentials = {
   "key":"" // feel in CREDENTIALS.js
 };
 
+var user_pos = undefined;
+
+function saveLoc(position) {
+  user_pos = position;
+}
+
+navigator.geolocation.getCurrentPosition(saveLoc);
+
 function hashCode(rule) {
   return JSON.stringify(rule);
+}
+
+
+function getDuration(src, des) {
+  var xmlHttp = new XMLHttpRequest();
+  var url = 
+    "https://maps.googleapis.com/maps/api/directions/json?origin=" +
+    src + "&destination=" + des + "&key=" + credentials['key'];
+  xmlHttp.open( "GET", url, false );
+  xmlHttp.send( null );
+  var response = JSON.parse(xmlHttp.responseText);
+  return response.routes[0].legs[0].duration.value;
+}
+
+function getPosString(pos) {
+  return '(' + pos.coords.latitude.toString() + ',' + pos.coords.longitude.toString() + ')'
 }
 
 function shouldCheckRule(rule) {
@@ -28,18 +52,17 @@ function shouldCheckRule(rule) {
   if (rule.mode == 'onetime') {
     localStorage.checkedRule[hashCode(rule)] = true;
   }
+  if (user_pos) {
+    // user no longer in the rule.src, don't show signal
+    if (getDuration(getPosString(user_pos), rule.src) > 10*60) {
+      return false;
+    }
+  }
   return true;
 }
 
 function checkRule(rule) {
-  var xmlHttp = new XMLHttpRequest();
-  var url = 
-    "https://maps.googleapis.com/maps/api/directions/json?origin=" +
-    rule.src + "&destination=" + rule.des + "&key=" + credentials['key'];
-  xmlHttp.open( "GET", url, false );
-  xmlHttp.send( null );
-  var response = JSON.parse(xmlHttp.responseText);
-  if (response.routes[0].legs[0].duration.value < 
+  if (getDuration(rule.src, rule.des) < 
     parseInt(rule.limit_time, 10) * 60) {
     return true;
   }
@@ -60,6 +83,7 @@ function checkRule(rule) {
 // }
 
 function checkTrip() {
+  navigator.geolocation.getCurrentPosition(saveLoc);
   var pass = 0;
   var fail = 0;
   var rules = localStorage.rules;
