@@ -1,6 +1,6 @@
-var fs = require('fs'),
-var credentials = JSON.parse(fs.readFileSync('./CREDNETIALS.json', 'UTF-8'));
-console.error(credentials);
+var credentials = {
+  "key":"" // feel in CREDENTIALS.js
+};
 
 function hashCode(rule) {
   return JSON.stringify(rule);
@@ -35,11 +35,10 @@ function checkRule(rule) {
   var xmlHttp = new XMLHttpRequest();
   var url = 
     "https://maps.googleapis.com/maps/api/directions/json?origin=" +
-    rule.src + "&destination=" + rule.des; + "&key=" + credentials.key;
+    rule.src + "&destination=" + rule.des + "&key=" + credentials['key'];
   xmlHttp.open( "GET", url, false );
   xmlHttp.send( null );
   var response = JSON.parse(xmlHttp.responseText);
-  console.error(url);
   if (response.routes[0].legs[0].duration.value < 
     parseInt(rule.limit_time, 10) * 60) {
     return true;
@@ -47,20 +46,18 @@ function checkRule(rule) {
   return false; 
 }
 
-console.log('here00');
 // init for testing
-if (!localStorage.rules) {
-  localStorage.rules = JSON.stringify([{
-    src: '4242 S El Camino Real, San Mateo, CA 94403',
-    des: '888 Brannan St, San Francisco, CA 94103',
-    start_time: '3am',
-    end_time: '11am',
-    limit_time: '35',
-    mode: 'weekday',
-    enabled: true
-  }]);
-}
-console.log('here01');
+// if (!localStorage.rules) {
+//   localStorage.rules = JSON.stringify([{
+//     src: '4242 S El Camino Real, San Mateo, CA 94403',
+//     des: '888 Brannan St, San Francisco, CA 94103',
+//     start_time: '2pm',
+//     end_time: '5pm',
+//     limit_time: '35',
+//     mode: 'weekday',
+//     enabled: true
+//   }]);
+// }
 
 function checkTrip() {
   var pass = 0;
@@ -77,13 +74,11 @@ function checkTrip() {
   for (var index = 0; index < rules.length; ++index) {
     var rule = rules[index];
     if (shouldCheckRule(rule)) {
-      console.log('here1');
       if (checkRule(rule)) {
         pass += 1;
       } else {
         fail += 1;
       }
-      console.log('here5');
     }
   }
   if (pass + fail == 0) {
@@ -98,7 +93,5 @@ function checkTrip() {
   return;
 }
 
-console.log('herea');
-checkTrip(); // testing
-console.log('hereb');
+checkTrip();
 setInterval(checkTrip , 300000); 
